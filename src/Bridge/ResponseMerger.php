@@ -9,6 +9,8 @@ use Dflydev\FigCookies\SetCookies;
 
 class ResponseMerger implements ResponseMergerInterface
 {
+    const FSTAT_MODE_S_IFIFO = 0010000;
+    
     /**
      * @var App
      */
@@ -60,6 +62,21 @@ class ResponseMerger implements ResponseMergerInterface
             }
 
             $swooleResponse->write($response->getBody()->getContents());
+            return $swooleResponse;
+        }
+        
+        $resource = $response->getBody()->detach();
+
+        if (is_resource($resource)) {
+            $stat = fstat($resource);
+
+            if (isset($stat['mode']) && ($stat['mode'] & self::FSTAT_MODE_S_IFIFO) !== 0) { // is a pipe?
+                while (!feof($resource)) {
+                    $buff = fread($resource, 8192);
+                    $swooleResponse->write($buff);
+                }
+                pclose($resource);
+            }
         }
 
         return $swooleResponse;
