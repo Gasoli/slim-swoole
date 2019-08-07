@@ -159,7 +159,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->body->expects($this->any())->method('detach')->willReturn(
             popen('php -r "echo str_repeat(\'x\', 10000);"', 'r')
         );
-        $this->swooleResponse->expects($writeSpy = $this->exactly(3))->method('write');
+        $this->swooleResponse->expects($writeSpy = $this->any())->method('write');
 
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
