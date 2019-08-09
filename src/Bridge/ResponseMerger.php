@@ -68,7 +68,7 @@ class ResponseMerger implements ResponseMergerInterface
             if (isset($stat['mode']) && ($stat['mode'] & self::FSTAT_MODE_S_IFIFO) !== 0) { // is a pipe?
                 while (!feof($resource)) {
                     $buff = fread($resource, 8192);
-                    $swooleResponse->write($buff);
+                    !empty($buff) && $swooleResponse->write($buff);
                 }
                 pclose($resource);
             }
