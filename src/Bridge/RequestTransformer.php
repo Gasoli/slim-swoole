@@ -24,6 +24,7 @@ class RequestTransformer implements RequestTransformerInterface
         $slimRequest = Http\Request::createFromEnvironment(
             new Http\Environment([
                     'SERVER_PROTOCOL' => $request->server['server_protocol'],
+                    'HTTP_HOST' => $request->header['host'],
                     'REQUEST_METHOD' => $request->server['request_method'],
                     'REQUEST_SCHEME' => static::DEFAULT_SCHEMA,
                     'REQUEST_URI' => $request->server['request_uri'],
