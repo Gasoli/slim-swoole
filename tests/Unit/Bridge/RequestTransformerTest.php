@@ -20,7 +20,7 @@ class RequestTransformerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCas
      */
     private $sut;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
