@@ -2,6 +2,8 @@
 
 namespace Pachico\SlimSwooleUnitTest\Bridge;
 
+use Dflydev\FigCookies\SetCookie;
+use Dflydev\FigCookies\Modifier\SameSite;
 use Pachico\SlimSwoole\Bridge;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http;
@@ -116,7 +118,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         
         $cookieArray = [
             'Cookie1=Value1; Domain=some-domain; Path=/; Expires='
-            . $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly',
+            . $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly; SameSite=None',
         ];
 
         // Arrange
@@ -127,7 +129,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->psrResponse->method('hasHeader')->willReturn(true);
         $this->swooleResponse->expects($headerSpy = $this->exactly(0))->method('header');
         $this->swooleResponse->expects($cookieSpy = $this->exactly(1))->method('cookie')
-            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true);
+            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true, 'SameSite=None');
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert

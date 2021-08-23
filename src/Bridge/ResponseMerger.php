@@ -80,7 +80,8 @@ class ResponseMerger implements ResponseMergerInterface
                 $setCookie->getPath(),
                 $setCookie->getDomain(),
                 $setCookie->getSecure(),
-                $setCookie->getHttpOnly()
+                $setCookie->getHttpOnly(),
+                $setCookie->getSameSite()->asString()
             );
         }
     }
