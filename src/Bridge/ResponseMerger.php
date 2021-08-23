@@ -5,7 +5,7 @@ namespace Pachico\SlimSwoole\Bridge;
 use Slim\App;
 use Psr\Http\Message\ResponseInterface;
 use swoole_http_response;
-use Dflydev\FigCookies\SetCookies; 
+use Dflydev\FigCookies\SetCookies;
 
 class ResponseMerger implements ResponseMergerInterface
 {
@@ -54,7 +54,7 @@ class ResponseMerger implements ResponseMergerInterface
             }
         }
 
-        $swooleResponse->status($response->getStatusCode());
+        $swooleResponse->status($response->getStatusCode(), $response->getReasonPhrase());
 
         if ($response->getBody()->getSize() > 0) {
             if ($response->getBody()->isSeekable()) {
@@ -97,7 +97,8 @@ class ResponseMerger implements ResponseMergerInterface
                 $setCookie->getPath(),
                 $setCookie->getDomain(),
                 $setCookie->getSecure(),
-                $setCookie->getHttpOnly()
+                $setCookie->getHttpOnly(),
+                $setCookie->getSameSite()->asString()
             );
         }
     }

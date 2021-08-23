@@ -23,7 +23,7 @@
     },
     "require-dev": {
         "eaglewu/swoole-ide-helper": "dev-master",
-        "phpunit/phpunit": "6.5.6",
+        "phpunit/phpunit": "^9.5",
         "slim/slim": "^3.9",
         "squizlabs/php_codesniffer": "^3.2"
     },

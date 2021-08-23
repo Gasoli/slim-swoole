@@ -2,6 +2,8 @@
 
 namespace Pachico\SlimSwooleUnitTest\Bridge;
 
+use Dflydev\FigCookies\SetCookie;
+use Dflydev\FigCookies\Modifier\SameSite;
 use Pachico\SlimSwoole\Bridge;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http;
@@ -39,7 +41,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
      */
     private $sut;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -98,7 +100,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
             'foo' => ['bar'],
             'fiz' => ['bam']
         ]);
-        $this->psrResponse->method('withoutHeader')->willReturn($this->psrResponse); 
+        $this->psrResponse->method('withoutHeader')->willReturn($this->psrResponse);
 
         $this->swooleResponse->expects($headerSpy = $this->exactly(2))->method('header');
         // Act
@@ -115,7 +117,8 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $expires = new \Datetime('+2 hours');
         
         $cookieArray = [
-            'Cookie1=Value1; Domain=some-domain; Path=/; Expires=' . $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly',
+            'Cookie1=Value1; Domain=some-domain; Path=/; Expires='
+            . $expires->format(\DateTime::COOKIE) . ' GMT; Secure; HttpOnly; SameSite=None',
         ];
 
         // Arrange
@@ -126,7 +129,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->psrResponse->method('hasHeader')->willReturn(true);
         $this->swooleResponse->expects($headerSpy = $this->exactly(0))->method('header');
         $this->swooleResponse->expects($cookieSpy = $this->exactly(1))->method('cookie')
-            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true);
+            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true, 'SameSite=None');
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
@@ -168,8 +171,9 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
     public function testStatusCodeGetsCopied()
     {
         // Arrange
-        $this->psrResponse->expects($this->once())->method('getStatusCode')->willReturn(400);
-        $this->swooleResponse->expects($setStatusSpy = $this->once())->method('status')->with(400);
+        $this->psrResponse->expects($this->once())->method('getStatusCode')->willReturn(235);
+        $this->psrResponse->expects($this->once())->method('getReasonPhrase')->willReturn('Unknown code');
+        $this->swooleResponse->expects($setStatusSpy = $this->once())->method('status')->with(235, 'Unknown code');
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
 
