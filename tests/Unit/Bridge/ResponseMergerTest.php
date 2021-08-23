@@ -129,7 +129,7 @@ class ResponseMergerTest extends \Pachico\SlimSwooleUnitTest\AbstractTestCase
         $this->psrResponse->method('hasHeader')->willReturn(true);
         $this->swooleResponse->expects($headerSpy = $this->exactly(0))->method('header');
         $this->swooleResponse->expects($cookieSpy = $this->exactly(1))->method('cookie')
-            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true, 'SameSite=None');
+            ->with('Cookie1', 'Value1', $expires->getTimestamp(), '/', 'some-domain', true, true, 'none');
         // Act
         $this->sut->mergeToSwoole($this->psrResponse, $this->swooleResponse);
         // Assert
