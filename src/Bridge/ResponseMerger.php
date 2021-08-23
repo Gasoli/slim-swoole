@@ -90,6 +90,8 @@ class ResponseMerger implements ResponseMergerInterface
 
         $setCookies = SetCookies::fromSetCookieStrings($response->getHeader('Set-Cookie'));
         foreach ($setCookies->getAll() as $setCookie) {
+            $sameSite = $setCookie->getSameSite();
+
             $swooleResponse->cookie(
                 $setCookie->getName(),
                 $setCookie->getValue(),
@@ -98,7 +100,7 @@ class ResponseMerger implements ResponseMergerInterface
                 $setCookie->getDomain(),
                 $setCookie->getSecure(),
                 $setCookie->getHttpOnly(),
-                $setCookie->getSameSite()->asString()
+                $sameSite ? explode('=', strtolower($sameSite->asString()))[1] : null
             );
         }
     }
